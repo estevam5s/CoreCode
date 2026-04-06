@@ -9,8 +9,8 @@ import { hasAnyKey, runSetupWizard } from './setup-wizard.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// resolve .env next to the binary (../../../.env relative to dist/cli.mjs)
-const envPath = path.resolve(__dirname, '..', '..', '.env');
+// dist/cli.mjs lives in dist/ — .env is one level up at CoreCode/.env
+const envPath = path.resolve(__dirname, '..', '.env');
 
 config({ path: envPath });
 
@@ -24,15 +24,15 @@ async function main() {
 
   showCoreCodeBanner();
 
-  // first-run wizard if no keys are configured
-  if (!hasAnyKey()) {
+  // skip wizard if mock provider is set (no key needed) or any real key exists
+  const isMock = (process.env.CORECODE_DEFAULT_PROVIDER || '') === 'mock';
+  if (!isMock && !hasAnyKey()) {
     await runSetupWizard(envPath);
-    // reload env after wizard
     config({ path: envPath, override: true });
   }
 
   const state = createState();
-  showCoreCodeWelcome();
+  showCoreCodeWelcome(state.provider, state.model);
 
   await startRepl(state);
 }

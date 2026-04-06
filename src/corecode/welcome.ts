@@ -1,13 +1,11 @@
 import chalk from 'chalk';
-import { resolveDefaultModel, resolveDefaultProvider } from './providerResolver.js';
 
-export function showCoreCodeWelcome() {
-  const provider = resolveDefaultProvider();
-  const model = resolveDefaultModel();
+export function showCoreCodeWelcome(provider?: string, model?: string) {
+  const p = provider || process.env.CORECODE_DEFAULT_PROVIDER || 'mock';
+  const m = model || process.env.CORECODE_DEFAULT_MODEL || '—';
 
-  console.log(chalk.white(`Provider: ${provider}`));
-  console.log(chalk.white(`Model:    ${model}`));
+  console.log(chalk.white(`Provider: ${chalk.bold(p)}`));
+  console.log(chalk.white(`Model:    ${chalk.bold(m)}`));
   console.log(chalk.gray('Modo:     Advanced CLI Agent'));
-  console.log(chalk.gray('Tema:     Preto e branco'));
-  console.log('');
+  console.log(chalk.gray('Tipo /help para ver os comandos.\n'));
 }

@@ -3,6 +3,8 @@ import { streamOpenAI } from './providers/openai.js';
 import { streamGemini } from './providers/gemini.js';
 import { streamOllama } from './providers/ollama.js';
 import { streamAnthropic } from './providers/anthropic.js';
+import { streamGroq } from './providers/groq.js';
+import { streamMock } from './providers/mock.js';
 
 export async function* streamResponse(
   state: CoreState,
@@ -33,6 +35,14 @@ export async function* streamResponse(
 
     case 'anthropic':
       yield* streamAnthropic(messages, state.model);
+      break;
+
+    case 'groq':
+      yield* streamGroq(messages, state.model);
+      break;
+
+    case 'mock':
+      yield* streamMock(messages, state.model);
       break;
 
     default:

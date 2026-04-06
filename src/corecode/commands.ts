@@ -3,8 +3,9 @@ import type { CoreState, ProviderName } from './state.js';
 import { BUILTIN_MODELS } from './state.js';
 import { listModelsOpenAI } from './providers/openai.js';
 import { listModelsOllama } from './providers/ollama.js';
+import { listModelsGroq } from './providers/groq.js';
 
-const PROVIDERS: ProviderName[] = ['openai', 'gemini', 'ollama', 'anthropic', 'openai-compatible'];
+const PROVIDERS: ProviderName[] = ['groq', 'openai', 'gemini', 'ollama', 'anthropic', 'openai-compatible', 'mock'];
 
 const HELP = `
 ${chalk.white.bold('CoreCode — Comandos disponíveis')}
@@ -12,9 +13,9 @@ ${chalk.gray('──────────────────────
 
   ${chalk.white('/help')}                    Mostra esta ajuda
   ${chalk.white('/model')}                   Mostra o modelo atual
-  ${chalk.white('/model <nome>')}            Troca o modelo
+  ${chalk.white('/model <nome>')}            Troca o modelo (ex: /model llama-3.3-70b-versatile)
   ${chalk.white('/model list')}              Lista modelos do provider atual
-  ${chalk.white('/model list --all')}        Lista todos os modelos (via API)
+  ${chalk.white('/model list --all')}        Lista todos os modelos via API
   ${chalk.white('/provider')}               Mostra o provider atual
   ${chalk.white('/provider <nome>')}         Troca o provider
   ${chalk.white('/provider list')}           Lista providers disponíveis
@@ -70,6 +71,8 @@ export async function handleCommand(
               models = await listModelsOpenAI();
             } else if (state.provider === 'ollama') {
               models = await listModelsOllama();
+            } else if (state.provider === 'groq') {
+              models = await listModelsGroq();
             }
           } catch (e: unknown) {
             console.log(chalk.gray(`(Não foi possível buscar via API: ${(e as Error).message})`));
@@ -97,10 +100,13 @@ export async function handleCommand(
       }
 
       if (args[0] === 'list') {
-        console.log(chalk.white('\nProviders disponíveis:\n') +
-          PROVIDERS.map((p) =>
-            p === state.provider ? `  ${chalk.white.bold(`${p} ←`)}` : `  ${chalk.gray(p)}`
-          ).join('\n') + '\n');
+        const FREE_PROVIDERS = new Set<ProviderName>(['groq', 'ollama', 'mock']);
+      console.log(chalk.white('\nProviders disponíveis:\n') +
+          PROVIDERS.map((p) => {
+            const tag = FREE_PROVIDERS.has(p) ? chalk.white(' [gratuito]') : '';
+            const line = `  ${p.padEnd(20)}${tag}`;
+            return p === state.provider ? chalk.white.bold(`${line} ←`) : chalk.gray(line);
+          }).join('\n') + '\n');
         return { type: 'handled' };
       }
 

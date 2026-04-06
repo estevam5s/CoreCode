@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import type { CoreState } from './state.js';
 import { handleCommand } from './commands.js';
 import { streamResponse } from './router.js';
+import { getMissingKeyMessage } from './setup-wizard.js';
 
 function prompt(state: CoreState): string {
   return chalk.white.bold(`[${state.provider}/${state.model}]`) + chalk.white(' › ');
@@ -77,9 +78,18 @@ export async function startRepl(state: CoreState): Promise<void> {
         state.history.splice(0, state.history.length - 40);
       }
     } catch (err: unknown) {
+      const msg = (err as Error).message;
       console.log('');
-      console.log(chalk.gray(`Erro: ${(err as Error).message}`));
-      console.log(chalk.gray('Verifique sua chave de API e provider com /status.\n'));
+      if (msg.includes('401') || msg.includes('API key') || msg.includes('api key')) {
+        console.log(chalk.gray('─────────────────────────────────────────────'));
+        console.log(getMissingKeyMessage(state.provider));
+        console.log(chalk.gray('─────────────────────────────────────────────\n'));
+      } else if (msg.includes('fetch') || msg.includes('ECONNREFUSED') || msg.includes('connect')) {
+        console.log(chalk.gray(`Sem conexão com ${state.provider}.`));
+        console.log(chalk.gray('Verifique sua internet ou se o serviço local está rodando.\n'));
+      } else {
+        console.log(chalk.gray(`Erro: ${msg}\n`));
+      }
     }
   }
 }

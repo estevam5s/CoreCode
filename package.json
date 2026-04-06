@@ -1,0 +1,69 @@
+{
+  "name": "@estevamsl/corecode",
+  "version": "0.2.4",
+  "description": "CoreCode — Advanced multi-model AI coding agent CLI. Run OpenAI, Groq, Gemini, Anthropic, Ollama and any OpenAI-compatible API from your terminal.",
+  "type": "module",
+  "bin": {
+    "corecode": "./bin/corecode.js"
+  },
+  "files": [
+    "bin/corecode.js",
+    "dist/cli.mjs",
+    "README.md",
+    "public/"
+  ],
+  "scripts": {
+    "build": "bun run scripts/build-corecode.ts",
+    "dev": "bun run build && node dist/cli.mjs",
+    "start": "node dist/cli.mjs",
+    "prepack": "bun run build",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "dotenv": "^17.4.1"
+  },
+  "devDependencies": {
+    "@types/bun": "1.3.11",
+    "@types/node": "25.5.0",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": {
+    "name": "Estevam Souza",
+    "url": "https://github.com/estevam5s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/estevam5s/CoreCode.git"
+  },
+  "homepage": "https://github.com/estevam5s/CoreCode#readme",
+  "bugs": {
+    "url": "https://github.com/estevam5s/CoreCode/issues"
+  },
+  "keywords": [
+    "corecode",
+    "ai",
+    "cli",
+    "agent",
+    "llm",
+    "openai",
+    "groq",
+    "gemini",
+    "anthropic",
+    "ollama",
+    "coding-agent",
+    "ai-cli",
+    "terminal",
+    "repl",
+    "multi-model"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

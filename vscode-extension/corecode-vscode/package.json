@@ -1,0 +1,129 @@
+{
+  "name": "corecode-vscode",
+  "displayName": "CoreCode",
+  "description": "Practical VS Code companion for CoreCode with project-aware launch behavior and a real Control Center.",
+  "version": "0.1.1",
+  "publisher": "devnull-bootloader",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:corecode.start",
+    "onCommand:corecode.startInWorkspaceRoot",
+    "onCommand:corecode.openDocs",
+    "onCommand:corecode.openSetupDocs",
+    "onCommand:corecode.openWorkspaceProfile",
+    "onCommand:corecode.openControlCenter",
+    "onView:corecode.controlCenter"
+  ],
+  "main": "./src/extension.js",
+  "files": [
+    "README.md",
+    "media/**",
+    "src/extension.js",
+    "src/presentation.js",
+    "src/state.js",
+    "themes/**"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "corecode.start",
+        "title": "CoreCode: Launch in Terminal",
+        "category": "CoreCode"
+      },
+      {
+        "command": "corecode.startInWorkspaceRoot",
+        "title": "CoreCode: Launch in Workspace Root",
+        "category": "CoreCode"
+      },
+      {
+        "command": "corecode.openDocs",
+        "title": "CoreCode: Open Repository",
+        "category": "CoreCode"
+      },
+      {
+        "command": "corecode.openSetupDocs",
+        "title": "CoreCode: Open Setup Guide",
+        "category": "CoreCode"
+      },
+      {
+        "command": "corecode.openWorkspaceProfile",
+        "title": "CoreCode: Open Workspace Profile",
+        "category": "CoreCode"
+      },
+      {
+        "command": "corecode.openControlCenter",
+        "title": "CoreCode: Open Control Center",
+        "category": "CoreCode"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "corecode",
+          "title": "CoreCode",
+          "icon": "media/corecode.svg"
+        }
+      ]
+    },
+    "views": {
+      "corecode": [
+        {
+          "id": "corecode.controlCenter",
+          "name": "Control Center",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "CoreCode",
+      "properties": {
+        "corecode.launchCommand": {
+          "type": "string",
+          "default": "corecode",
+          "description": "Command run in the integrated terminal when launching CoreCode."
+        },
+        "corecode.terminalName": {
+          "type": "string",
+          "default": "CoreCode",
+          "description": "Integrated terminal tab name for CoreCode sessions."
+        },
+        "corecode.useOpenAIShim": {
+          "type": "boolean",
+          "default": false,
+          "description": "Optionally set CLAUDE_CODE_USE_OPENAI=1 in launched CoreCode terminals."
+        }
+      }
+    },
+    "themes": [
+      {
+        "label": "CoreCode Terminal Black",
+        "uiTheme": "vs-dark",
+        "path": "./themes/CoreCode-Terminal-Black.json"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node --test ./src/*.test.js",
+    "lint": "node -e \"for (const file of require('node:fs').readdirSync('./src')) { if (file.endsWith('.js')) { require('node:child_process').execFileSync(process.execPath, ['--check', require('node:path').join('src', file)], { stdio: 'inherit' }); } }\"",
+    "package": "npx @vscode/vsce package --no-dependencies"
+  },
+  "keywords": [
+    "corecode",
+    "terminal",
+    "theme",
+    "cli",
+    "llm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gitlawb/corecode"
+  },
+  "license": "MIT"
+}

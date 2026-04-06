@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" fill="none">
+  <rect width="1200" height="400" fill="#0a0a0f"/>
+  <defs>
+    <pattern id="grid2" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E8955A" stroke-width="0.4" opacity="0.1"/>
+    </pattern>
+    <radialGradient id="glow2" cx="30%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#E8955A" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0a0a0f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="fade-right" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="60%" stop-color="#0a0a0f" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0a0a0f" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="orange-grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F0A070"/>
+      <stop offset="100%" stop-color="#D4603A"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#grid2)"/>
+  <rect width="1200" height="400" fill="url(#glow2)"/>
+
+  <!-- Left border accent -->
+  <rect x="0" y="0" width="4" height="400" fill="url(#orange-grad2)"/>
+
+  <!-- Icon -->
+  <g transform="translate(60, 155)">
+    <rect width="70" height="70" rx="14" fill="#111118" stroke="#E8955A" stroke-opacity="0.3" stroke-width="1"/>
+    <path d="M11 17 L11 53 M11 17 L20 17 M11 53 L20 53" stroke="#E8955A" stroke-width="3" stroke-linecap="round"/>
+    <path d="M59 17 L59 53 M59 17 L50 17 M59 53 L50 53" stroke="#D4603A" stroke-width="3" stroke-linecap="round"/>
+    <path d="M25 27 L40 35 L25 43" stroke="#E8955A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="43" y="30" width="8" height="8" rx="1.5" fill="#E8955A" opacity="0.9"/>
+  </g>
+
+  <!-- CoreCode title -->
+  <text x="160" y="200" font-family="'Geist Mono', monospace" font-weight="800" font-size="72" fill="white" letter-spacing="-2">Core</text>
+  <text x="340" y="200" font-family="'Geist Mono', monospace" font-weight="800" font-size="72" fill="url(#orange-grad2)" letter-spacing="-2">Code</text>
+
+  <!-- Subtitle -->
+  <text x="160" y="240" font-family="'Geist', sans-serif" font-size="20" fill="#666" letter-spacing="1">Documentação Técnica · v0.1.8</text>
+
+  <!-- Decorative line -->
+  <line x1="160" y1="265" x2="600" y2="265" stroke="#1e1e2e" stroke-width="1"/>
+
+  <!-- Tags -->
+  <rect x="160" y="280" width="130" height="32" rx="6" fill="#E8955A" fill-opacity="0.1" stroke="#E8955A" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="185" y="301" font-family="'Geist Mono', monospace" font-size="13" fill="#E8955A">Multi-Model CLI</text>
+
+  <rect x="304" y="280" width="100" height="32" rx="6" fill="#111118" stroke="#1e1e2e" stroke-width="1"/>
+  <text x="326" y="301" font-family="'Geist Mono', monospace" font-size="13" fill="#555">Open Source</text>
+
+  <rect x="418" y="280" width="80" height="32" rx="6" fill="#111118" stroke="#1e1e2e" stroke-width="1"/>
+  <text x="440" y="301" font-family="'Geist Mono', monospace" font-size="13" fill="#555">MIT</text>
+
+  <!-- Right: terminal preview lines -->
+  <g opacity="0.35" transform="translate(680, 80)">
+    <text x="0" y="40" font-family="'Geist Mono', monospace" font-size="14" fill="#E8955A">$ npm install -g @estevamsl/corecode</text>
+    <text x="0" y="70" font-family="'Geist Mono', monospace" font-size="14" fill="#555">  added 3 packages in 113ms</text>
+    <text x="0" y="110" font-family="'Geist Mono', monospace" font-size="14" fill="#666">$ corecode</text>
+    <text x="0" y="150" font-family="'Geist Mono', monospace" font-size="14" fill="#E8955A">● groq/llama-3.3-70b · tools: file bash search</text>
+    <text x="0" y="190" font-family="'Geist Mono', monospace" font-size="14" fill="#444">&gt; explique este arquivo @src/api.ts</text>
+    <text x="0" y="220" font-family="'Geist Mono', monospace" font-size="14" fill="#E8955A">●</text>
+    <text x="20" y="220" font-family="'Geist Mono', monospace" font-size="14" fill="#888">Este arquivo define os endpoints REST da API...</text>
+    <text x="0" y="258" font-family="'Geist Mono', monospace" font-size="14" fill="#444">&gt; /model gpt-4o</text>
+    <text x="0" y="286" font-family="'Geist Mono', monospace" font-size="14" fill="#E8955A">● openai · gpt-4o</text>
+  </g>
+
+  <!-- Fade overlay right -->
+  <rect x="1050" y="0" width="150" height="400" fill="url(#fade-right)"/>
+
+  <!-- Author -->
+  <text x="60" y="375" font-family="'Geist', sans-serif" font-size="13" fill="#333">por Estevam Souza · core-code-landing.vercel.app</text>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#0a0a0f"/>
+  <rect width="64" height="64" rx="14" fill="url(#bg-grad)" opacity="0.8"/>
+  <!-- Terminal bracket left -->
+  <path d="M10 20 L10 44" stroke="#E8955A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M10 20 L20 20" stroke="#E8955A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M10 44 L20 44" stroke="#E8955A" stroke-width="3" stroke-linecap="round"/>
+  <!-- Chevron prompt -->
+  <path d="M24 26 L34 32 L24 38" stroke="#E8955A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Cursor bar -->
+  <rect x="37" y="28.5" width="7" height="7" rx="1" fill="#E8955A" opacity="0.9"/>
+  <!-- Terminal bracket right -->
+  <path d="M54 20 L54 44" stroke="#D4603A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M54 20 L44 20" stroke="#D4603A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M54 44 L44 44" stroke="#D4603A" stroke-width="3" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E8955A" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#D4603A" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,1 @@
+Reset git history without losing code — shell script + commit conventions (Conventional Commits)

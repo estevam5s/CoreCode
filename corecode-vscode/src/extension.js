@@ -12,6 +12,7 @@ const {
   resolveCommandCheckPath,
 } = require('./state');
 const { buildControlCenterViewModel } = require('./presentation');
+const { CoreCodeChatProvider } = require('./chat-panel');
 
 const CORECODE_REPO_URL = 'https://github.com/Gitlawb/corecode';
 const CORECODE_SETUP_URL = 'https://github.com/Gitlawb/corecode/blob/main/README.md#quick-start';
@@ -1042,9 +1043,15 @@ class CoreCodeControlCenterProvider {
  */
 function activate(context) {
   const provider = new CoreCodeControlCenterProvider();
+  const chatProvider = new CoreCodeChatProvider(context);
   const refreshProvider = () => {
     void provider.refresh();
   };
+
+  // Chat panel command
+  const openChatCommand = vscode.commands.registerCommand('corecode.openChat', () => {
+    chatProvider.openChat();
+  });
 
   const startCommand = vscode.commands.registerCommand('corecode.start', async () => {
     await launchCoreCode();
@@ -1087,6 +1094,7 @@ function activate(context) {
   const profileWatcher = vscode.workspace.createFileSystemWatcher(`**/${PROFILE_FILE_NAME}`);
 
   context.subscriptions.push(
+    openChatCommand,
     startCommand,
     startInWorkspaceRootCommand,
     openDocsCommand,

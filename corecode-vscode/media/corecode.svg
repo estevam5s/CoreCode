@@ -1,0 +1,12 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="20" fill="#0a0a0f"/>
+  <rect x="12" y="12" width="104" height="104" rx="14" fill="#111118" stroke="#E8955A" stroke-opacity="0.3" stroke-width="1"/>
+  <!-- Brackets left -->
+  <path d="M28 40 L28 88 M28 40 L42 40 M28 88 L42 88" stroke="#E8955A" stroke-width="6" stroke-linecap="round"/>
+  <!-- Brackets right -->
+  <path d="M100 40 L100 88 M100 40 L86 40 M100 88 L86 88" stroke="#D4603A" stroke-width="6" stroke-linecap="round"/>
+  <!-- Chevron -->
+  <path d="M46 52 L66 64 L46 76" stroke="#E8955A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Cursor block -->
+  <rect x="70" y="56" width="14" height="16" rx="3" fill="#E8955A" opacity="0.9"/>
+</svg>

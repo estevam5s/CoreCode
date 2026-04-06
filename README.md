@@ -1,7 +1,8 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/estevam5s/CoreCode/main/public/docs-banner.svg" alt="CoreCode" width="100%" />
+<img src="https://raw.githubusercontent.com/estevam5s/CoreCode/main/public/corecode-cli.png" alt="CoreCode" width="140" />
 
+<br/>
 <br/>
 
 [![npm version](https://img.shields.io/npm/v/@estevamsl/corecode?style=flat-square&color=E8955A&label=npm)](https://www.npmjs.com/package/@estevamsl/corecode)
@@ -9,12 +10,13 @@
 [![Node](https://img.shields.io/badge/node-%3E%3D20-white?style=flat-square&logo=node.js)](https://nodejs.org)
 [![License](https://img.shields.io/badge/license-MIT-white?style=flat-square)](./LICENSE)
 [![Providers](https://img.shields.io/badge/providers-10+-E8955A?style=flat-square)](#provedores)
-[![Models](https://img.shields.io/badge/models-200+-white?style=flat-square)](#openrouter--200-modelos)
+[![Models](https://img.shields.io/badge/models-348+-white?style=flat-square)](#openrouter--200-modelos)
+[![VS Code](https://img.shields.io/badge/VS%20Code-Extension-5865F2?style=flat-square&logo=visualstudiocode)](https://marketplace.visualstudio.com/items?itemName=corecodecli.corecode-vscode)
 [![Site](https://img.shields.io/badge/site-core--code--landing.vercel.app-white?style=flat-square)](https://core-code-landing.vercel.app/)
 
 **Agente de IA multi-modelo para o seu terminal — qualquer modelo, toda ferramenta, zero limites.**
 
-[**🌐 Site**](https://core-code-landing.vercel.app/) · [**📦 npm**](https://www.npmjs.com/package/@estevamsl/corecode) · [**📖 Docs**](https://core-code-landing.vercel.app/docs) · [**⭐ GitHub**](https://github.com/estevam5s/CoreCode)
+[**🌐 Site**](https://core-code-landing.vercel.app/) · [**📦 npm**](https://www.npmjs.com/package/@estevamsl/corecode) · [**📖 Docs**](https://core-code-landing.vercel.app/docs) · [**⭐ GitHub**](https://github.com/estevam5s/CoreCode) · [**🧩 VS Code**](https://marketplace.visualstudio.com/items?itemName=corecodecli.corecode-vscode)
 
 </div>
 
@@ -614,15 +616,29 @@ corecode
 
 ---
 
+## Extensão VS Code
+
+O CoreCode também está disponível como extensão oficial para o VS Code com **348+ modelos de IA** em um painel de chat completo:
+
+```
+ext install corecodecli.corecode-vscode
+```
+
+[**→ Instalar no VS Code Marketplace**](https://marketplace.visualstudio.com/items?itemName=corecodecli.corecode-vscode)
+
+Consulte a [documentação da extensão](./corecode-vscode/readme.md) para detalhes completos.
+
+---
+
 ## Comparação
 
-| Ferramenta | Provedores | Open Source | Preço | Terminal |
-|---|---|---|---|---|
-| **CoreCode** | 10+ (200+ via OpenRouter) | ✅ MIT | Grátis | ✅ nativo |
-| Claude Code | Anthropic | ❌ | Pago | ✅ |
-| GitHub Copilot CLI | OpenAI | ❌ | Pago | ✅ |
-| Aider | OpenAI, Anthropic | ✅ | Grátis | ✅ |
-| Continue.dev | Vários | ✅ | Grátis | ❌ (IDE) |
+| Ferramenta | Provedores | Open Source | Preço | Terminal | VS Code |
+|---|---|---|---|---|---|
+| **CoreCode** | 10+ (348+ via OpenRouter) | ✅ MIT | Grátis | ✅ nativo | ✅ extensão |
+| Claude Code | Anthropic | ❌ | Pago | ✅ | ✅ |
+| GitHub Copilot CLI | OpenAI | ❌ | Pago | ✅ | ✅ |
+| Aider | OpenAI, Anthropic | ✅ | Grátis | ✅ | ❌ |
+| Continue.dev | Vários | ✅ | Grátis | ❌ | ✅ (IDE) |
 
 ---
 

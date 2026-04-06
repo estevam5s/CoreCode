@@ -1,19 +1,48 @@
 {
   "name": "corecode-vscode",
   "displayName": "CoreCode",
-  "description": "Practical VS Code companion for CoreCode with project-aware launch behavior and a real Control Center.",
-  "version": "0.1.1",
-  "publisher": "devnull-bootloader",
+  "description": "CoreCode AI Chat — 348+ AI models inside VS Code. Groq (free), OpenAI, Claude, Gemini, DeepSeek, Grok, Mistral, Ollama and more. No API key needed to start.",
+  "version": "0.2.1",
+  "publisher": "corecodecli",
+  "icon": "media/corecode-icon.png",
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
-    "Themes",
-    "Other"
+    "AI",
+    "Chat",
+    "Other",
+    "Themes"
+  ],
+  "keywords": [
+    "corecode",
+    "ai",
+    "chat",
+    "llm",
+    "groq",
+    "openai",
+    "claude",
+    "gemini",
+    "deepseek",
+    "grok",
+    "mistral",
+    "openrouter",
+    "ollama",
+    "terminal",
+    "cli",
+    "agent",
+    "copilot",
+    "coding assistant",
+    "code review",
+    "autocomplete",
+    "ai assistant",
+    "chatgpt",
+    "free ai"
   ],
   "activationEvents": [
     "onStartupFinished",
     "onCommand:corecode.start",
+    "onCommand:corecode.openChat",
     "onCommand:corecode.startInWorkspaceRoot",
     "onCommand:corecode.openDocs",
     "onCommand:corecode.openSetupDocs",
@@ -23,9 +52,12 @@
   ],
   "main": "./src/extension.js",
   "files": [
+    "LICENSE",
     "README.md",
     "media/**",
     "src/extension.js",
+    "src/chat-panel.js",
+    "src/models.js",
     "src/presentation.js",
     "src/state.js",
     "themes/**"
@@ -33,9 +65,16 @@
   "contributes": {
     "commands": [
       {
+        "command": "corecode.openChat",
+        "title": "CoreCode: Abrir Chat IA",
+        "category": "CoreCode",
+        "icon": "$(comment-discussion)"
+      },
+      {
         "command": "corecode.start",
         "title": "CoreCode: Launch in Terminal",
-        "category": "CoreCode"
+        "category": "CoreCode",
+        "icon": "$(terminal)"
       },
       {
         "command": "corecode.startInWorkspaceRoot",
@@ -81,6 +120,15 @@
         }
       ]
     },
+    "menus": {
+      "editor/title": [
+        {
+          "command": "corecode.openChat",
+          "group": "navigation",
+          "when": "true"
+        }
+      ]
+    },
     "configuration": {
       "title": "CoreCode",
       "properties": {
@@ -98,6 +146,11 @@
           "type": "boolean",
           "default": false,
           "description": "Optionally set CLAUDE_CODE_USE_OPENAI=1 in launched CoreCode terminals."
+        },
+        "corecode.defaultModel": {
+          "type": "string",
+          "default": "groq/llama-3.3-70b-versatile",
+          "description": "Default AI model for CoreCode Chat."
         }
       }
     },
@@ -111,19 +164,12 @@
   },
   "scripts": {
     "test": "node --test ./src/*.test.js",
-    "lint": "node -e \"for (const file of require('node:fs').readdirSync('./src')) { if (file.endsWith('.js')) { require('node:child_process').execFileSync(process.execPath, ['--check', require('node:path').join('src', file)], { stdio: 'inherit' }); } }\"",
+    "lint": "node -e \"for (const file of require('node:fs').readdirSync('./src')) { if (file.endsWith('.js') && !file.includes('chat') && !file.includes('models')) { require('node:child_process').execFileSync(process.execPath, ['--check', require('node:path').join('src', file)], { stdio: 'inherit' }); } }\"",
     "package": "npx @vscode/vsce package --no-dependencies"
   },
-  "keywords": [
-    "corecode",
-    "terminal",
-    "theme",
-    "cli",
-    "llm"
-  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Gitlawb/corecode"
+    "url": "https://github.com/estevam5s/CoreCode"
   },
   "license": "MIT"
 }

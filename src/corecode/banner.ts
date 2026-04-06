@@ -1,12 +1,16 @@
-import figlet from 'figlet';
 import chalk from 'chalk';
 import boxen from 'boxen';
 
+const ASCII_LOGO = `
+  ██████╗ ██████╗ ██████╗ ███████╗ ██████╗ ██████╗ ██████╗ ███████╗
+ ██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔════╝
+ ██║     ██║   ██║██████╔╝█████╗  ██║     ██║   ██║██║  ██║█████╗
+ ██║     ██║   ██║██╔══██╗██╔══╝  ██║     ██║   ██║██║  ██║██╔══╝
+ ╚██████╗╚██████╔╝██║  ██║███████╗╚██████╗╚██████╔╝██████╔╝███████╗
+  ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═════╝╚══════╝`;
+
 export function showCoreCodeBanner() {
-  const title = figlet.textSync('CoreCode', {
-    horizontalLayout: 'default',
-    verticalLayout: 'default'
-  });
+  const title = ASCII_LOGO;
 
   const subtitle = 'ADVANCED MULTI-MODEL AI CLI';
 

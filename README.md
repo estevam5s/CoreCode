@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/estevam5s/CoreCode/main/public/corecode-cli.png" alt="CoreCode" width="600" />
+<img src="https://raw.githubusercontent.com/estevam5s/CoreCode/main/public/corecode-cli.png" alt="CoreCode" width="400" />
 
 <br/>
 <br/>

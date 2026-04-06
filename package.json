@@ -12,7 +12,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "bun run scripts/build.ts",
+    "build": "bun run scripts/build-corecode.ts",
     "dev": "bun run build && node dist/cli.mjs",
     "dev:profile": "bun run scripts/provider-launch.ts",
     "dev:profile:fast": "bun run scripts/provider-launch.ts auto --fast --bare",
@@ -48,7 +48,8 @@
     "hardening:strict": "bun run typecheck && bun run hardening:check",
     "prepack": "npm run build",
     "corecode:start": "node dist/cli.mjs",
-    "corecode:dev": "bun run build && node dist/cli.mjs"
+    "corecode:dev": "bun run build && node dist/cli.mjs",
+    "build:full": "bun run scripts/build.ts"
   },
   "dependencies": {
     "@alcalzone/ansi-tokenize": "0.3.0",

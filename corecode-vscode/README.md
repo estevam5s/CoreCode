@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./media/corecode-cli.png" alt="CoreCode VS Code Extension" width="400" />
+<img src="https://raw.githubusercontent.com/estevam5s/CoreCode/main/corecode-vscode/media/corecode-cli.png" alt="CoreCode VS Code Extension" width="400" />
 
 <br/>
 <br/>

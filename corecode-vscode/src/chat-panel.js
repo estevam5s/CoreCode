@@ -742,8 +742,8 @@ class CoreCodeChatProvider {
   function markdownToHtml(text) {
     return text
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\x60\x60\x60([\s\S]*?)\x60\x60\x60/g, '<pre><code>$1</code></pre>')
+      .replace(/\x60([^\x60]+)\x60/g, '<code>$1</code>')
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br>');
   }
@@ -781,7 +781,7 @@ class CoreCodeChatProvider {
   function renderTabs() {
     const container = document.getElementById('picker-tabs');
     container.innerHTML = state.tabs.map(tab =>
-      `<button class="picker-tab ${tab === state.activeTab ? 'active' : ''}" onclick="switchTab('${tab}')">${tab}</button>`
+      '<button class="picker-tab ' + (tab === state.activeTab ? 'active' : '') + '" onclick="switchTab(\'' + tab + '\')">' + tab + '</button>'
     ).join('');
   }
 
@@ -845,20 +845,20 @@ class CoreCodeChatProvider {
   function modelItemHtml(m) {
     const isSelected = m.id === state.modelId;
     const badgeHtml = m.badge
-      ? `<span class="badge badge-${m.badge.toLowerCase().replace(' ', '-')}">${m.badge}</span>`
+      ? '<span class="badge badge-' + m.badge.toLowerCase().replace(' ', '-') + '">' + m.badge + '</span>'
       : m.free ? '<span class="badge badge-free">FREE</span>' : '';
     const check = isSelected ? '<span class="check">✓</span>' : '';
 
-    return `<div class="model-item ${isSelected ? 'selected' : ''}" onclick="selectModel('${escapeAttr(m.id)}')">
-      <div class="model-item-left">
-        <span class="model-item-name">${escapeHtml(m.name)}</span>
-      </div>
-      <div class="model-item-right">
-        ${badgeHtml}
-        <span class="model-item-provider">${escapeHtml(m.provider)}</span>
-        ${check}
-      </div>
-    </div>`;
+    return '<div class="model-item ' + (isSelected ? 'selected' : '') + '" onclick="selectModel(\'' + escapeAttr(m.id) + '\')">'
+      + '<div class="model-item-left">'
+      + '<span class="model-item-name">' + escapeHtml(m.name) + '</span>'
+      + '</div>'
+      + '<div class="model-item-right">'
+      + badgeHtml
+      + '<span class="model-item-provider">' + escapeHtml(m.provider) + '</span>'
+      + check
+      + '</div>'
+      + '</div>';
   }
 
   function selectModel(modelId) {

@@ -925,214 +925,193 @@ class CoreCodeControlCenterProvider {
 
   resolveWebviewView(webviewView) {
     this._view = webviewView;
+    webviewView.webview.options = { enableScripts: true };
 
-    webviewView.webview.options = {
-      enableScripts: true,
-      retainContextWhenHidden: true,
-    };
+    // Render immediately — no async, guaranteed to show
+    webviewView.webview.html = this._buildHtml();
 
-    // Set skeleton HTML immediately so webview is never blank
-    webviewView.webview.html = this._getLoadingHtml();
+    webviewView.onDidDispose(() => { this._view = null; });
 
-    webviewView.onDidDispose(() => {
-      if (this._view === webviewView) {
-        this._view = null;
-      }
-    });
-
-    webviewView.webview.onDidReceiveMessage(async message => {
-      switch (message?.type) {
-        case 'launch':
-          await launchCoreCode();
-          break;
-        case 'launchRoot':
-          await launchCoreCode({ requireWorkspace: true });
-          break;
-        case 'openProfile':
-          await openWorkspaceProfile();
-          break;
-        case 'repo':
-          await vscode.env.openExternal(vscode.Uri.parse(CORECODE_REPO_URL));
-          break;
-        case 'setup':
-          await vscode.env.openExternal(vscode.Uri.parse(CORECODE_SETUP_URL));
-          break;
-        case 'commands':
-          await vscode.commands.executeCommand('workbench.action.showCommands');
-          break;
-        case 'chat':
-          await vscode.commands.executeCommand('corecode.openChat');
-          break;
+    webviewView.webview.onDidReceiveMessage(async msg => {
+      if (!msg || !msg.type) return;
+      switch (msg.type) {
+        case 'chat':    vscode.commands.executeCommand('corecode.openChat'); break;
+        case 'launch':  launchCoreCode(); break;
+        case 'launchRoot': launchCoreCode({ requireWorkspace: true }); break;
+        case 'repo':    vscode.env.openExternal(vscode.Uri.parse(CORECODE_REPO_URL)); break;
+        case 'setup':   vscode.env.openExternal(vscode.Uri.parse(CORECODE_SETUP_URL)); break;
+        case 'commands': vscode.commands.executeCommand('workbench.action.showCommands'); break;
         case 'refresh':
-        default:
+          if (this._view) { this._view.webview.html = this._buildHtml(); }
           break;
       }
-      void this.refresh();
     });
-
-    // Load real content async — does not block resolveWebviewView
-    void this.refresh();
   }
 
-  async refresh() {
-    if (!this._view) {
-      return;
-    }
-    try {
-      const status = await collectControlCenterState();
-      if (this._view) {
-        this._view.webview.html = this.getHtml(status);
-      }
-    } catch (error) {
-      if (this._view) {
-        this._view.webview.html = this._getErrorHtml(error);
-      }
-    }
+  refresh() {
+    if (this._view) { this._view.webview.html = this._buildHtml(); }
   }
 
-  _getLoadingHtml() {
+  _buildHtml() {
+    const nonce = crypto.randomBytes(16).toString('base64');
+    const cfg = vscode.workspace.getConfiguration('corecode');
+    const model = cfg.get('defaultModel', 'groq/llama-3.3-70b-versatile');
+    const ws = (vscode.workspace.workspaceFolders || []);
+    const wsName = ws.length > 0 ? ws[0].name : 'Nenhum workspace';
+    const wsPath = ws.length > 0 ? ws[0].uri.fsPath : '—';
+    const launchCmd = cfg.get('launchCommand', 'corecode');
+
     return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline';" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--vscode-font-family, "Segoe UI", sans-serif);
-      background: var(--vscode-sideBar-background, #0a0a0f);
-      color: var(--vscode-foreground, #ccc);
-      padding: 16px;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .logo-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid rgba(232,149,90,0.15);
-    }
-    .logo-box {
-      width: 28px; height: 28px;
-      background: #E8955A;
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 800; color: #0a0a0f;
-      flex-shrink: 0;
-    }
-    .logo-name { font-weight: 700; font-size: 13px; color: var(--vscode-foreground, #eee); }
-    .logo-version { font-size: 10px; opacity: 0.4; margin-left: 4px; }
-    .skeleton {
-      height: 14px; border-radius: 6px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-    }
-    .skeleton.short { width: 60%; }
-    .skeleton.medium { width: 80%; }
-    .skeleton.full { width: 100%; }
-    .skeleton.h8 { height: 8px; }
-    .skeleton.h32 { height: 32px; border-radius: 8px; }
-    .card { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); }
-    .gap4 { display: flex; flex-direction: column; gap: 4px; }
-    @keyframes shimmer { to { background-position: -200% 0; } }
-  </style>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:var(--vscode-font-family,"Segoe UI",sans-serif);
+  font-size:13px;
+  color:var(--vscode-foreground,#ccc);
+  background:var(--vscode-sideBar-background,#1e1e1e);
+  padding:12px;
+  display:flex;flex-direction:column;gap:10px;
+  min-height:100vh;
+}
+.header{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;
+  background:rgba(232,149,90,0.1);
+  border:1px solid rgba(232,149,90,0.25);
+  border-radius:10px;
+}
+.logo{
+  width:32px;height:32px;border-radius:8px;
+  background:#E8955A;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:11px;color:#000;flex-shrink:0;
+}
+.header-text{flex:1;}
+.header-title{font-weight:700;font-size:13px;color:#E8955A;}
+.header-sub{font-size:10px;opacity:0.5;margin-top:1px;}
+.btn{
+  width:100%;padding:10px 12px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.04);
+  color:var(--vscode-foreground,#ccc);
+  cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:3px;
+  transition:background 0.15s,border-color 0.15s;
+  font-family:inherit;
+}
+.btn:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);}
+.btn.primary{
+  background:rgba(232,149,90,0.15);
+  border-color:rgba(232,149,90,0.4);
+}
+.btn.primary:hover{background:rgba(232,149,90,0.25);}
+.btn-label{font-size:12px;font-weight:600;color:var(--vscode-foreground,#eee);}
+.btn.primary .btn-label{color:#E8955A;}
+.btn-detail{font-size:10px;opacity:0.5;}
+.section-title{
+  font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.08em;
+  opacity:0.4;padding:4px 2px 2px;
+}
+.info-card{
+  padding:10px 12px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.02);
+  display:flex;flex-direction:column;gap:6px;
+}
+.info-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.info-label{font-size:11px;opacity:0.45;flex-shrink:0;}
+.info-value{font-size:11px;font-family:monospace;opacity:0.75;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px;}
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;padding:2px 8px;border-radius:999px;
+  background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);
+  color:#22c55e;font-weight:600;
+}
+.divider{height:1px;background:rgba(255,255,255,0.06);margin:2px 0;}
+</style>
 </head>
 <body>
-  <div class="logo-row">
-    <div class="logo-box">CC</div>
-    <span class="logo-name">CoreCode</span>
-    <span class="logo-version">v0.2.3</span>
+
+<div class="header">
+  <div class="logo">CC</div>
+  <div class="header-text">
+    <div class="header-title">CoreCode</div>
+    <div class="header-sub">v0.2.3 · 348+ modelos de IA</div>
   </div>
-  <div class="card">
-    <div class="skeleton short"></div>
-    <div class="gap4">
-      <div class="skeleton full h8"></div>
-      <div class="skeleton medium h8"></div>
-    </div>
+  <span class="badge">● Free</span>
+</div>
+
+<div class="section-title">Chat IA</div>
+<button class="btn primary" id="chat">
+  <span class="btn-label">💬 Abrir Chat IA</span>
+  <span class="btn-detail">Groq, Claude, GPT-4.1, Gemini, DeepSeek…</span>
+</button>
+
+<div class="divider"></div>
+
+<div class="section-title">Terminal</div>
+<button class="btn" id="launch">
+  <span class="btn-label">▶ Launch CoreCode</span>
+  <span class="btn-detail">Iniciar agente no terminal integrado</span>
+</button>
+<button class="btn" id="launchRoot">
+  <span class="btn-label">⎇ Launch in Workspace Root</span>
+  <span class="btn-detail">Iniciar na raiz do workspace</span>
+</button>
+
+<div class="divider"></div>
+
+<div class="section-title">Status</div>
+<div class="info-card">
+  <div class="info-row">
+    <span class="info-label">Workspace</span>
+    <span class="info-value" title="${wsPath}">${wsName}</span>
   </div>
-  <div class="card">
-    <div class="skeleton short"></div>
-    <div class="gap4">
-      <div class="skeleton full h8"></div>
-      <div class="skeleton medium h8"></div>
-      <div class="skeleton short h8"></div>
-    </div>
+  <div class="info-row">
+    <span class="info-label">Modelo padrão</span>
+    <span class="info-value" title="${model}">${model}</span>
   </div>
-  <div class="skeleton h32"></div>
-  <div class="skeleton h32"></div>
+  <div class="info-row">
+    <span class="info-label">Comando</span>
+    <span class="info-value">${launchCmd}</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section-title">Links</div>
+<button class="btn" id="setup">
+  <span class="btn-label">📖 Guia de configuração</span>
+</button>
+<button class="btn" id="repo">
+  <span class="btn-label">⭐ Repositório GitHub</span>
+</button>
+<button class="btn" id="commands">
+  <span class="btn-label">⌘ Command Palette</span>
+</button>
+<button class="btn" id="refresh">
+  <span class="btn-label">↻ Atualizar painel</span>
+</button>
+
+<script nonce="${nonce}">
+const vsc = acquireVsCodeApi();
+document.getElementById('chat').onclick    = () => vsc.postMessage({type:'chat'});
+document.getElementById('launch').onclick  = () => vsc.postMessage({type:'launch'});
+document.getElementById('launchRoot').onclick = () => vsc.postMessage({type:'launchRoot'});
+document.getElementById('setup').onclick   = () => vsc.postMessage({type:'setup'});
+document.getElementById('repo').onclick    = () => vsc.postMessage({type:'repo'});
+document.getElementById('commands').onclick= () => vsc.postMessage({type:'commands'});
+document.getElementById('refresh').onclick = () => vsc.postMessage({type:'refresh'});
+</script>
 </body>
 </html>`;
   }
 
-  _getErrorHtml(error) {
-    const nonce = crypto.randomBytes(16).toString('base64');
-    const message =
-      error instanceof Error ? error.message : 'Unknown Control Center error';
-
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      font-family: var(--vscode-font-family);
-      padding: 16px;
-      color: var(--vscode-foreground);
-      background: var(--vscode-sideBar-background);
-    }
-    .panel {
-      border: 1px solid var(--vscode-errorForeground);
-      border-radius: 8px;
-      padding: 14px;
-      background: color-mix(in srgb, var(--vscode-sideBar-background) 88%, black);
-    }
-    .title {
-      color: var(--vscode-errorForeground);
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .message {
-      color: var(--vscode-descriptionForeground);
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-    button {
-      border: 1px solid var(--vscode-button-border, transparent);
-      background: var(--vscode-button-background);
-      color: var(--vscode-button-foreground);
-      border-radius: 6px;
-      padding: 8px 10px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <div class="panel">
-    <div class="title">Control Center Error</div>
-    <div class="message">${escapeHtml(message)}</div>
-    <button id="refresh">Refresh</button>
-  </div>
-  <script nonce="${nonce}">
-    const vscode = acquireVsCodeApi();
-    document.getElementById('refresh').addEventListener('click', () => {
-      vscode.postMessage({ type: 'refresh' });
-    });
-  </script>
-</body>
-</html>`;
-  }
-
-  getHtml(status) {
-    const nonce = crypto.randomBytes(16).toString('base64');
-    return renderControlCenterHtml(status, { nonce, platform: process.platform });
-  }
 }
 
 
@@ -1187,6 +1166,7 @@ function activate(context) {
   const providerDisposable = vscode.window.registerWebviewViewProvider(
     'corecode.controlCenter',
     provider,
+    { webviewOptions: { retainContextWhenHidden: true } },
   );
 
   const profileWatcher = vscode.workspace.createFileSystemWatcher(`**/${PROFILE_FILE_NAME}`);

@@ -2,9 +2,9 @@
   "name": "corecode-vscode",
   "displayName": "CoreCode",
   "description": "CoreCode AI Chat — 348+ AI models inside VS Code. Groq (free), OpenAI, Claude, Gemini, DeepSeek, Grok, Mistral, Ollama and more. No API key needed to start.",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "publisher": "corecodecli",
-  "icon": "media/corecode-icon.png",
+  "icon": "media/corecode-icon-128.png",
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -107,7 +107,7 @@
         {
           "id": "corecode",
           "title": "CoreCode",
-          "icon": "media/corecode-sidebar.svg"
+          "icon": "media/corecode-cli.png"
         }
       ]
     },

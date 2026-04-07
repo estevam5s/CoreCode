@@ -839,7 +839,7 @@ function renderControlCenterHtml(status, options = {}) {
         <div class="hero-top">
           <div class="brand">
             <div class="eyebrow">${escapeHtml(viewModel.header.eyebrow)}</div>
-            <div class="wordmark" aria-label="CoreCode wordmark">Open<span class="wordmark-accent">Claude</span></div>
+            <div class="wordmark" aria-label="CoreCode wordmark">Core<span class="wordmark-accent">Code</span></div>
             <div class="headline">
               <h1 class="headline-title" id="control-center-title">${escapeHtml(viewModel.header.title)}</h1>
               <p class="headline-subtitle">${escapeHtml(viewModel.header.subtitle)}</p>
@@ -862,6 +862,10 @@ function renderControlCenterHtml(status, options = {}) {
       <section class="actions-layout" aria-label="Control center actions">
         <section class="action-panel" aria-labelledby="actions-title">
           <h2 class="action-section-title" id="actions-title">Launch & Project</h2>
+          <button class="action-button primary" id="openChat" type="button">
+            <span class="action-label">💬 Abrir Chat IA</span>
+            <span class="action-detail">348+ modelos — Groq, Claude, GPT-4.1, Gemini...</span>
+          </button>
           ${renderActionButton(viewModel.actions.primary, 'primary')}
           <div class="action-stack">
             ${renderActionButton(viewModel.actions.launchRoot)}
@@ -897,6 +901,7 @@ function renderControlCenterHtml(status, options = {}) {
 
   <script nonce="${nonce}">
     const vscode = acquireVsCodeApi();
+    document.getElementById('openChat').addEventListener('click', () => vscode.postMessage({ type: 'chat' }));
     document.getElementById('launch').addEventListener('click', () => vscode.postMessage({ type: 'launch' }));
     document.getElementById('launchRoot').addEventListener('click', () => vscode.postMessage({ type: 'launchRoot' }));
     document.getElementById('repo').addEventListener('click', () => vscode.postMessage({ type: 'repo' }));
@@ -915,16 +920,23 @@ function renderControlCenterHtml(status, options = {}) {
 
 class CoreCodeControlCenterProvider {
   constructor() {
-    this.webviewView = null;
+    this._view = null;
   }
 
-  async resolveWebviewView(webviewView) {
-    this.webviewView = webviewView;
-    webviewView.webview.options = { enableScripts: true };
+  resolveWebviewView(webviewView) {
+    this._view = webviewView;
+
+    webviewView.webview.options = {
+      enableScripts: true,
+      retainContextWhenHidden: true,
+    };
+
+    // Set skeleton HTML immediately so webview is never blank
+    webviewView.webview.html = this._getLoadingHtml();
 
     webviewView.onDidDispose(() => {
-      if (this.webviewView === webviewView) {
-        this.webviewView = null;
+      if (this._view === webviewView) {
+        this._view = null;
       }
     });
 
@@ -948,31 +960,116 @@ class CoreCodeControlCenterProvider {
         case 'commands':
           await vscode.commands.executeCommand('workbench.action.showCommands');
           break;
+        case 'chat':
+          await vscode.commands.executeCommand('corecode.openChat');
+          break;
         case 'refresh':
         default:
           break;
       }
-
-      await this.refresh();
+      void this.refresh();
     });
 
-    await this.refresh();
+    // Load real content async — does not block resolveWebviewView
+    void this.refresh();
   }
 
   async refresh() {
-    if (!this.webviewView) {
+    if (!this._view) {
       return;
     }
-
     try {
       const status = await collectControlCenterState();
-      this.webviewView.webview.html = this.getHtml(status);
+      if (this._view) {
+        this._view.webview.html = this.getHtml(status);
+      }
     } catch (error) {
-      this.webviewView.webview.html = this.getErrorHtml(error);
+      if (this._view) {
+        this._view.webview.html = this._getErrorHtml(error);
+      }
     }
   }
 
-  getErrorHtml(error) {
+  _getLoadingHtml() {
+    return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline';" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--vscode-font-family, "Segoe UI", sans-serif);
+      background: var(--vscode-sideBar-background, #0a0a0f);
+      color: var(--vscode-foreground, #ccc);
+      padding: 16px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(232,149,90,0.15);
+    }
+    .logo-box {
+      width: 28px; height: 28px;
+      background: #E8955A;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #0a0a0f;
+      flex-shrink: 0;
+    }
+    .logo-name { font-weight: 700; font-size: 13px; color: var(--vscode-foreground, #eee); }
+    .logo-version { font-size: 10px; opacity: 0.4; margin-left: 4px; }
+    .skeleton {
+      height: 14px; border-radius: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton.short { width: 60%; }
+    .skeleton.medium { width: 80%; }
+    .skeleton.full { width: 100%; }
+    .skeleton.h8 { height: 8px; }
+    .skeleton.h32 { height: 32px; border-radius: 8px; }
+    .card { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); }
+    .gap4 { display: flex; flex-direction: column; gap: 4px; }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+  </style>
+</head>
+<body>
+  <div class="logo-row">
+    <div class="logo-box">CC</div>
+    <span class="logo-name">CoreCode</span>
+    <span class="logo-version">v0.2.3</span>
+  </div>
+  <div class="card">
+    <div class="skeleton short"></div>
+    <div class="gap4">
+      <div class="skeleton full h8"></div>
+      <div class="skeleton medium h8"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="skeleton short"></div>
+    <div class="gap4">
+      <div class="skeleton full h8"></div>
+      <div class="skeleton medium h8"></div>
+      <div class="skeleton short h8"></div>
+    </div>
+  </div>
+  <div class="skeleton h32"></div>
+  <div class="skeleton h32"></div>
+</body>
+</html>`;
+  }
+
+  _getErrorHtml(error) {
     const nonce = crypto.randomBytes(16).toString('base64');
     const message =
       error instanceof Error ? error.message : 'Unknown Control Center error';
@@ -1037,6 +1134,7 @@ class CoreCodeControlCenterProvider {
     return renderControlCenterHtml(status, { nonce, platform: process.platform });
   }
 }
+
 
 /**
  * @param {vscode.ExtensionContext} context
